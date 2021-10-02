@@ -6,8 +6,8 @@ import java.util.*;
 /*
 Inheritance Structure: 
 
+To Do: University? (act on all people at once)
 Menu
-University? (act on all people at once)
 Person
     -> Student
     -> DepartmentPerson
@@ -106,7 +106,7 @@ public class Main {
 
                 case 3:
 
-                    // two students must be entered (i.e. if student[0] doesn't exist neither will student[1])
+                    // two students must be entered (i.e. if students[0] doesn't exist neither will students[1])
                     if (students[0] == null) {
                         System.out.println("\n\nSorry! No students have been entered yet\n");
                         break;
@@ -125,7 +125,7 @@ public class Main {
                         System.out.println("Invalid Choice, try again.");
                     }
                     
-                    myScanner.nextLine();
+                    myScanner.nextLine(); // clears buffer
                     break;
 
                 case 4:
@@ -200,13 +200,6 @@ public class Main {
         } while (option != 7);
     }
 }
-
-/*
-public class University {
-
-    ArrayList<
-}
-*/
 
 abstract class Person {
 
@@ -284,18 +277,18 @@ class Student extends Person {
     }
 
     public double getTotalFees() {
-        return getTuition()+standardFee;
+        return this.getTuition()+standardFee;
     }
 
     public double getBonus() {
         if (this.gpa >= 3.85) {
-            return 0.15*getTotalFees();
+            return 0.15*this.getTotalFees();
         }
         return 0;
     }
 
     public int getCurrentCreditHours() {
-        return currentCreditHours;
+        return this.currentCreditHours;
     }
 
     public void setCurrentCreditHours(int currentCreditHours) {
@@ -424,11 +417,13 @@ class Menu {
     public boolean updateOption() {
 
         String option;
+
         do {
             System.out.print("\tYes or No: ");
             option = myScanner.nextLine();
             option = option.toLowerCase();
         } while ((!(option.equals("yes"))) && (!(option.equals("no"))));
+
         if (option.equals("no")) {
             return false;
         }
