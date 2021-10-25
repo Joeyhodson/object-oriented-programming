@@ -1,33 +1,32 @@
 // Joey Hodson
-// OOP - Project 1 (9/20/21)
+// OOP - Project 2 (11/09/21)
 
 import java.util.*;
 
 /*
 Inheritance Structure: 
 
-To Do: University? (act on all people at once)
+University (holds an array of people)
 Menu
-Person
+Person (abstract)
     -> Student
-    -> DepartmentPerson
+    -> Employee (abstract)
         -> Faculty
         -> Staff
 */
 
 public class Main {
 
+    final int size = 100;
     public static void main(String args[]) {
 
+        final int size = 100;
+
+        University myUniversity = new University(size);
         Menu myMenu = new Menu();
         Scanner myScanner = new Scanner(System.in);
         String name, id, department;
         int option;
-
-        Student students[] = new Student[2];
-        Faculty faculty = null;
-        Staff staff = null;
-
 
         System.out.println("\t\t\tWelcome to my Personal Management Program");
         System.out.println("\n\nChoose one of the options:");
@@ -39,14 +38,6 @@ public class Main {
             switch(option) {
 
                 case 1:
-
-                    // check if faculty is occupied
-                    if (faculty != null) {
-                        System.out.println("\tYou already have a Faculty member filled in. Do you want to update their information?");
-                        if (!(myMenu.updateOption())) {
-                            break;
-                        }
-                    }
 
                     // enter faculty info
                     String rank;
@@ -66,87 +57,52 @@ public class Main {
                     do {
                         System.out.print("\t\tDepartment: ");
                         department = myScanner.nextLine();
-                    } while (DepartmentPerson.isDepartmentValid(department.toLowerCase()) == false);
+                    } while (Employee.isDepartmentValid(department.toLowerCase()) == false);
                     
-                    faculty = new Faculty(name, id, department, rank);
-                    System.out.print("\n\t\tFaculty successfully added!\n\n");
+                    myUniversity.insertPerson(new Faculty(name, id, department, rank), size);
                     break;
 
+                // enter student info
                 case 2:
-
-                    if (students[0] != null) {
-                        System.out.println("\tYou already have two students filled in. Do you want to update their information?");
-                        if (!(myMenu.updateOption())) {
-                            break;
-                        }
-                    }
 
                     double gpa;
                     int currentCreditHours;
 
-                    for (int i = 1; i <= 2; i++) {
-                        System.out.println("\nEnter student "+i+" info:");
-                        System.out.print("\t\tName of student: ");
-                        name = myScanner.nextLine();
+                    System.out.println("\nEnter the student info:");
+                    System.out.print("\t\tName of student: ");
+                    name = myScanner.nextLine();
 
-                        System.out.print("\t\tID: ");
-                        id = myScanner.nextLine();
+                    System.out.print("\t\tID: ");
+                    id = myScanner.nextLine();
 
-                        System.out.print("\t\tGpa: ");
-                        gpa = myScanner.nextDouble();
+                    System.out.print("\t\tGpa: ");
+                    gpa = myScanner.nextDouble();
 
-                        System.out.print("\t\tCredit hours: ");
-                        currentCreditHours = myScanner.nextInt();
+                    System.out.print("\t\tCredit hours: ");
+                    currentCreditHours = myScanner.nextInt();
 
-                        students[i-1] = new Student(name, id, currentCreditHours, gpa);
-                        System.out.print("Thanks!\n\n");
-                        name = myScanner.nextLine(); // clears buffer
-                    }
+                    myUniversity.insertPerson(new Student(name, id, currentCreditHours, gpa), size);
+                    name = myScanner.nextLine(); // clears buffer
                     break;
 
+                // print student info
                 case 3:
 
-                    // two students must be entered (i.e. if students[0] doesn't exist neither will students[1])
-                    if (students[0] == null) {
-                        System.out.println("\n\nSorry! No students have been entered yet\n");
-                        break;
-                    }
-
-                    int studentChoice;
-
-                    System.out.print("\nWhich student? Enter 1 for "+students[0].getName()+" or Enter 2 "+students[1].getName()+" ? ");
-                    studentChoice = myScanner.nextInt();
-
-                    if (studentChoice == 1 || studentChoice == 2) {
-                        System.out.println("\nHere is the tuition invoice for "+students[studentChoice-1].getName()+" :");
-                        students[studentChoice-1].displayTuition();
-                    }
-                    else {
-                        System.out.println("Invalid Choice, try again.");
-                    }
-                    
-                    myScanner.nextLine(); // clears buffer
+                    System.out.print("\nEnter the student's id: ");
+                    id = myScanner.nextLine();
+                    myUniversity.print("Student", id);
                     break;
 
+                // print faculty info
                 case 4:
 
-                    if(faculty == null) {
-                        System.out.println("\n\nSorry! No Faculty member entered yet\n");
-                        break;
-                    }
-
-                    faculty.displayFaculty();
+                    System.out.print("\nEnter the faculty's id: ");
+                    id = myScanner.nextLine();
+                    myUniversity.print("Faculty", id);
                     break;
 
+                // enter staff info
                 case 5:
-                    
-                    // check if staff is occupied
-                    if (staff != null) {
-                        System.out.println("\tYou already have a Staff member filled in. Do you want to update their information?");
-                        if (!(myMenu.updateOption())) {
-                            break;
-                        }
-                    }
 
                     String status;
 
@@ -160,7 +116,7 @@ public class Main {
                     do {
                         System.out.print("\t\tDepartment: ");
                         department = myScanner.nextLine();
-                    } while (DepartmentPerson.isDepartmentValid(department.toLowerCase()) == false);
+                    } while (Employee.isDepartmentValid(department.toLowerCase()) == false);
 
                     do {
                         System.out.print("\t\tStatus, Enter P for Part Time or Enter F for Full Time: ");
@@ -175,20 +131,18 @@ public class Main {
                         status = "Full";
                     }
 
-                    staff = new Staff(name, id, department, status);
-                    System.out.print("\n\t\tStaff member added!\n\n");
+                    myUniversity.insertPerson(new Staff(name, id, department, status), size);
                     break;
 
+                // print staff info
                 case 6:
 
-                    if(staff == null) {
-                        System.out.println("\n\nSorry! No Staff member entered yet\n");
-                        break;
-                    }
-
-                    staff.displayStaff();
+                    System.out.print("\nEnter the staff's id: ");
+                    id = myScanner.nextLine();
+                    myUniversity.print("Staff", id);
                     break;
 
+                // exit program
                 case 7:
                     System.out.println("\n\n\n\nGoodbye!\n");
                     break;
@@ -201,13 +155,104 @@ public class Main {
     }
 }
 
+class University {
+
+    private int peopleCount = 0;
+    public Person [] list;
+
+    public int getPeopleCount() {
+        return this.peopleCount;
+    }
+
+    public void setPeopleCount(int peopleCount) {
+        this.peopleCount = peopleCount;
+    }
+
+    public University(int size) {
+
+        this.list = new Person[size];
+
+        for (int i = 0; i < size; i++) {
+            list[i] = null;
+        }
+    }
+
+    public Person search(String personnelType, String id) {
+
+        int personIndex = -1;
+        for (int i = 0; i < this.getPeopleCount(); i++) {
+            if(((this.list[i]).getId()).equals(id)) {
+                personIndex = i;
+                break;
+            }
+        }
+        
+        if (personIndex != -1) {
+        
+            switch(personnelType.toLowerCase()) {
+                case "student":
+                    if (((((this.list[personIndex]).getClass()).getName()).toLowerCase()).equals("student")) {
+                        return this.list[personIndex];
+                    }
+                    break;
+                case "faculty":
+                    if (((((this.list[personIndex]).getClass()).getName()).toLowerCase()).equals("faculty")) {
+                        return this.list[personIndex];
+                    }
+                    break;
+                case "staff":
+                    if (((((this.list[personIndex]).getClass()).getName()).toLowerCase()).equals("staff")) {
+                        return this.list[personIndex];
+                    }
+                    break;
+            }
+        }
+
+        return null;
+    }
+
+    public void insertPerson(Person person, int maxSize) {
+
+        if (this.getPeopleCount() == maxSize) {
+            System.out.println("\nMax people in system.\n"); // add removal option with id as input
+            return;
+        }
+
+        this.setPeopleCount(this.getPeopleCount() + 1);
+        this.list[this.getPeopleCount() - 1] = person;
+        System.out.print("\n\t\t"+((this.list[this.getPeopleCount() - 1]).getClass()).getName()+" added!\n\n");
+    }
+
+    public void print(String personnelType, String id) {
+
+        Person person = this.search(personnelType, id);
+        if (person == null) {
+            System.out.println("\tNo "+personnelType.toLowerCase()+" match!\n");
+            return;
+        }
+
+        person.print();
+    }
+
+
+}
+
 abstract class Person {
 
     private String name, id;
+    private int index;
 
     public Person(String name, String id) {
         this.name = name;
         this.id = id;
+    }
+
+    public int getIndex() {
+        return this.index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getName() {
@@ -225,14 +270,16 @@ abstract class Person {
     public void setId(String id) {
         this.id = id;
     }
+
+    public abstract void print();
 }
 
 
-abstract class DepartmentPerson extends Person {
+abstract class Employee extends Person {
 
     private String department;
 
-    public DepartmentPerson(String name, String id, String department) {
+    public Employee(String name, String id, String department) {
         super(name, id);
         this.department = department;
     }
@@ -249,12 +296,14 @@ abstract class DepartmentPerson extends Person {
 
         if (department.equals("mathematics") || 
             department.equals("engineering") || 
-            department.equals("english")) {
+            department.equals("sciences")) {
             return true;
         }
         System.out.println("\t\t\t\""+department+"\" is invalid");
         return false;
     }
+
+    public abstract void print();
 }
 
 
@@ -303,7 +352,8 @@ class Student extends Person {
         this.gpa = gpa;
     }
 
-    public void displayTuition() {
+    @Override
+    public void print() {
         System.out.println("-----------------------------------------------------------------------");
         System.out.println(this.getName()+"\t\t"+this.getId());
         System.out.println("Credit Hours: "+this.getCurrentCreditHours()+" ($"+creditHourPrice+"/credit hour)");
@@ -319,7 +369,7 @@ class Student extends Person {
 }
 
 
-class Faculty extends DepartmentPerson {
+class Faculty extends Employee {
 
     private String rank;
 
@@ -347,16 +397,17 @@ class Faculty extends DepartmentPerson {
         return false;
     }
 
-    public void displayFaculty() {
+    @Override
+    public void print() {
         System.out.println("-----------------------------------------------------------------------");
         System.out.println(this.getName()+"\t\t"+this.getId());
-        System.out.println(this.getDepartment()+" Department, "+this.rank);
+        System.out.println(this.getDepartment()+" Department, "+this.getRank());
         System.out.println("-----------------------------------------------------------------------");
     }
 }
 
 
-class Staff extends DepartmentPerson {
+class Staff extends Employee {
 
     private String status;
 
@@ -373,10 +424,11 @@ class Staff extends DepartmentPerson {
         this.status = status;
     }
 
-    public void displayStaff() {
+    @Override
+    public void print() {
         System.out.println("-----------------------------------------------------------------------");
         System.out.println(this.getName()+"\t\t"+this.getId());
-        System.out.println(this.getDepartment()+" Department, "+this.status+" Time");
+        System.out.println(this.getDepartment()+" Department, "+this.getStatus()+" Time");
         System.out.println("-----------------------------------------------------------------------");
     }
 }
@@ -393,12 +445,12 @@ class Menu {
             String option;
             int intOption;
 
-            System.out.println("1- Enter the information of the faculty member");
-            System.out.println("2- Enter the information of the two students");
-            System.out.println("3- Print tuition invoive");
+            System.out.println("1- Enter the information of a faculty member");
+            System.out.println("2- Enter the information of a student");
+            System.out.println("3- Print tuition invoive for a student");
             System.out.println("4- Print faculty information");
-            System.out.println("5- Enter the information of the staff member");
-            System.out.println("6- Print the information of the staff member");
+            System.out.println("5- Enter the information of a staff member");
+            System.out.println("6- Print the information of a staff member");
             System.out.println("7- Exit Program");
 
             System.out.print("\n\tEnter your selection: ");
