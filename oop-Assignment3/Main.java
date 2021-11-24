@@ -2,6 +2,7 @@
 // OOP - Project 3 (12/02/21)
 
 import java.util.*;
+import java.io.*;
 
 /*
 Inheritance Structure: 
@@ -17,10 +18,9 @@ Person (abstract)
 
 public class Main {
 
-    final int maxSize = 100;
-
     public static void main(String args[]) {
 
+        final int maxSize = 100;
         University myUniversity = new University();
         Menu myMenu = new Menu();
         Scanner myScanner = new Scanner(System.in);
@@ -45,8 +45,17 @@ public class Main {
                     System.out.print("\t\tName of the faculty: ");
                     name = myScanner.nextLine();
 
-                    System.out.print("\t\tID: ");
-                    id = myScanner.nextLine();
+                    do {
+                        try {
+                            System.out.print("\t\tID: ");
+                            id = myScanner.nextLine();
+                            Person.validateId(myUniversity, id);
+                            break;
+                        }
+                        catch (IdException ex) {
+                            continue;
+                        }
+                    } while (true);
 
                     do {
                         System.out.print("\t\tRank: ");
@@ -58,7 +67,7 @@ public class Main {
                         department = myScanner.nextLine();
                     } while (Employee.isDepartmentValid(department.toLowerCase()) == false);
                     
-                    myUniversity.insertPerson(new Faculty(name, id, department, rank), size);
+                    myUniversity.insertPerson(new Faculty(name, id, department, rank), maxSize);
                     break;
 
                 // enter student info
@@ -71,8 +80,17 @@ public class Main {
                     System.out.print("\t\tName of student: ");
                     name = myScanner.nextLine();
 
-                    System.out.print("\t\tID: ");
-                    id = myScanner.nextLine();
+                    do {
+                        try {
+                            System.out.print("\t\tID: ");
+                            id = myScanner.nextLine();
+                            Person.validateId(myUniversity, id);
+                            break;
+                        }
+                        catch (IdException ex) {
+                            continue;
+                        }
+                    } while (true);
 
                     System.out.print("\t\tGpa: ");
                     gpa = myScanner.nextDouble();
@@ -80,7 +98,7 @@ public class Main {
                     System.out.print("\t\tCredit hours: ");
                     currentCreditHours = myScanner.nextInt();
 
-                    myUniversity.insertPerson(new Student(name, id, currentCreditHours, gpa), size);
+                    myUniversity.insertPerson(new Student(name, id, currentCreditHours, gpa), maxSize);
                     name = myScanner.nextLine(); // clears buffer
                     break;
 
@@ -109,8 +127,17 @@ public class Main {
                     System.out.print("\t\tName of the staff member: ");
                     name = myScanner.nextLine();
 
-                    System.out.print("\t\tEnter the id: ");
-                    id = myScanner.nextLine();
+                    do {
+                        try {
+                            System.out.print("\t\tID: ");
+                            id = myScanner.nextLine();
+                            Person.validateId(myUniversity, id);
+                            break;
+                        }
+                        catch (IdException ex) {
+                            continue;
+                        }
+                    } while (true);
 
                     do {
                         System.out.print("\t\tDepartment: ");
@@ -130,7 +157,7 @@ public class Main {
                         status = "Full";
                     }
 
-                    myUniversity.insertPerson(new Staff(name, id, department, status), size);
+                    myUniversity.insertPerson(new Staff(name, id, department, status), maxSize);
                     break;
 
                 // print staff info
@@ -167,6 +194,13 @@ public class Main {
     }
 }
 
+class IdException extends Exception {
+
+    public IdException(String errorMessage) {
+        System.out.println(errorMessage);
+    }
+}
+
 class University {
 
     private HashMap<String, Person> list;
@@ -175,38 +209,8 @@ class University {
         this.list = new HashMap<String, Person>();
     }
 
-    public Person search(String personnelType, String id) {
-
-        int personIndex = -1;
-        for (int i = 0; i < this.getPeopleCount(); i++) {
-            if(((this.list[i]).getId()).equals(id)) {
-                personIndex = i;
-                break;
-            }
-        }
-        
-        if (personIndex != -1) {
-        
-            switch(personnelType.toLowerCase()) {
-                case "student":
-                    if (((((this.list[personIndex]).getClass()).getName()).toLowerCase()).equals("student")) {
-                        return this.list[personIndex];
-                    }
-                    break;
-                case "faculty":
-                    if (((((this.list[personIndex]).getClass()).getName()).toLowerCase()).equals("faculty")) {
-                        return this.list[personIndex];
-                    }
-                    break;
-                case "staff":
-                    if (((((this.list[personIndex]).getClass()).getName()).toLowerCase()).equals("staff")) {
-                        return this.list[personIndex];
-                    }
-                    break;
-            }
-        }
-
-        return null;
+    public HashMap<String, Person> getList() {
+        return this.list;
     }
 
     public void insertPerson(Person person, int maxSize) {
@@ -216,15 +220,15 @@ class University {
             return;
         }
 
-        this.setPeopleCount(this.getPeopleCount() + 1);
-        this.list[this.getPeopleCount() - 1] = person;
-        System.out.print("\n\t\t"+((this.list[this.getPeopleCount() - 1]).getClass()).getName()+" added!\n\n");
+        this.list.put(person.getId(), person);
+        System.out.print("\n\t\t" + (this.list.get(person.getId()).getClass().getName() + " added!\n\n"));
     }
 
     public void print(String personnelType, String id) {
 
-        Person person = this.search(personnelType, id);
-        if (person == null) {
+        Person person = this.list.get(id);
+
+        if (person == null || !(person.getClass().getName().equals(personnelType))) {
             System.out.println("\tNo "+personnelType.toLowerCase()+" match!\n");
             return;
         }
@@ -232,7 +236,61 @@ class University {
         person.print();
     }
 
+    public void generateAndExportReport() {
 
+        ArrayList<Student> StudentList = new ArrayList<Student>();
+        ArrayList<Faculty> FacultyList = new ArrayList<Faculty>();
+        ArrayList<Staff> StaffList = new ArrayList<Staff>();
+
+        for (Person value : this.list.values()) {
+            if (value instanceof Student) {
+                StudentList.add((Student)value);
+            }
+            else if (value instanceof Faculty) {
+                FacultyList.add((Faculty)value);
+            }
+            else {
+                StaffList.add((Staff)value);
+            }
+        }
+
+        try {
+
+            Date date = new Date();
+            FileWriter reportStream = new FileWriter("report.txt");
+            BufferedWriter report = new BufferedWriter(reportStream);
+
+            report.write("\t\tReport created on " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() % 2000));
+            report.write("\t\t**********************");
+
+            report.write("Faculty Members:\n---------------\n");
+            for (int i = 0; i < FacultyList.size(); i++) {
+                report.write("\t"+ (i+1) + "." + FacultyList.get(i).getName());
+                report.write("\tID: " + FacultyList.get(i).getId());
+                report.write("\t" + FacultyList.get(i).getRank() + ", " + FacultyList.get(i).getDepartment());
+            }
+
+            report.write("Staff Members:\n---------------\n");
+            for (int i = 0; i < StaffList.size(); i++) {
+                report.write("\t"+ (i+1) + "." + StaffList.get(i).getName());
+                report.write("\tID: " + StaffList.get(i).getId());
+                report.write("\t" + StaffList.get(i).getDepartment() + ", " + StaffList.get(i).getStatus() + " Time");
+            }
+
+            report.write("Students:\n---------------\n");
+            for (int i = 0; i < StudentList.size(); i++) {
+                report.write("\t"+ (i+1) + "." + StudentList.get(i).getName());
+                report.write("\tID: " + StudentList.get(i).getId());
+                report.write("\tGPA: " + StudentList.get(i).getGpa());
+                report.write("\tCredit hours: " + StudentList.get(i).getCurrentCreditHours());
+            }
+
+            System.out.println("Report created and saved to hard drive!");
+        }
+        catch (Exception ex) {
+            System.out.println("Error generating report.");
+        }
+    }
 }
 
 abstract class Person {
@@ -269,6 +327,28 @@ abstract class Person {
         this.id = id;
     }
 
+    public static void validateId(University myUniversity, String id) throws IdException {
+
+        id = id.toLowerCase();
+
+        if (myUniversity.getList().containsKey(id)) {
+            throw new IdException("\t\tUser ID already in system.\n");
+        }
+
+        if (id.length() == 6 &&
+        Character.isLetter(id.charAt(0)) &&
+        Character.isLetter(id.charAt(1)) &&
+        Character.isDigit(id.charAt(2)) &&
+        Character.isDigit(id.charAt(3)) &&
+        Character.isDigit(id.charAt(4)) &&
+        Character.isDigit(id.charAt(5)))
+        {
+            return;
+        }
+
+        throw new IdException("\t\tInvalid ID format. Must be LetterLetterDigitDigitDigitDigit.\n");
+    }
+
     public abstract void print();
 }
 
@@ -297,7 +377,7 @@ abstract class Employee extends Person {
             department.equals("sciences")) {
             return true;
         }
-        System.out.println("\t\t\t\""+department+"\" is invalid");
+        System.out.println("\t\t\""+department+"\" is invalid\n");
         return false;
     }
 
@@ -391,7 +471,7 @@ class Faculty extends Employee {
             rank.equals("researcher")) {
             return true;
         }
-        System.out.println("\t\t\t\""+rank+"\" is invalid");
+        System.out.println("\t\t\""+rank+"\" is invalid\n");
         return false;
     }
 
