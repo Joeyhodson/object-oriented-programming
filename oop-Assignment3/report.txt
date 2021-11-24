@@ -1,0 +1,24 @@
+		Report created on 11/23/21
+		**************************
+
+Faculty Members:
+----------------
+	1. John Hodson
+	ID: jo1234
+	Dean, Engineering
+
+
+Staff Members:
+--------------
+	1. James Hodson
+	ID: ja1234
+	Sciences, Full Time
+
+
+Students:
+---------
+	1. Joey Hodson
+	ID: jo4321
+	GPA: 3.4
+	Credit hours: 16
+

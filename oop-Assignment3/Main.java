@@ -3,6 +3,8 @@
 
 import java.util.*;
 import java.io.*;
+import java.time.*;
+import java.time.format.*;
 
 /*
 Inheritance Structure: 
@@ -92,11 +94,29 @@ public class Main {
                         }
                     } while (true);
 
-                    System.out.print("\t\tGpa: ");
-                    gpa = myScanner.nextDouble();
+                    do {
+                        try {
+                            System.out.print("\t\tGpa: ");
+                            gpa = myScanner.nextDouble();
+                            break;
+                        }
+                        catch (InputMismatchException ex) {
+                            System.out.println("\n\t\tPlease enter a number.\n");
+                            myScanner.nextLine();
+                        }
+                    } while (true);
 
-                    System.out.print("\t\tCredit hours: ");
-                    currentCreditHours = myScanner.nextInt();
+                    do {
+                        try {
+                            System.out.print("\t\tCredit hours: ");
+                            currentCreditHours = myScanner.nextInt();
+                            break;
+                        }
+                        catch (InputMismatchException ex) {
+                            System.out.println("\n\t\tPlease enter a number.\n");
+                            myScanner.nextLine();
+                        }
+                    } while (true);
 
                     myUniversity.insertPerson(new Student(name, id, currentCreditHours, gpa), maxSize);
                     name = myScanner.nextLine(); // clears buffer
@@ -256,39 +276,42 @@ class University {
 
         try {
 
-            Date date = new Date();
-            FileWriter reportStream = new FileWriter("report.txt");
-            BufferedWriter report = new BufferedWriter(reportStream);
+            LocalDateTime date = LocalDateTime.now();
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
 
-            report.write("\t\tReport created on " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() % 2000));
-            report.write("\t\t**********************");
+            FileWriter report = new FileWriter("./report.txt");
 
-            report.write("Faculty Members:\n---------------\n");
+            report.write("\t\tReport created on " + date.format(dateFormat));
+            report.write("\n\t\t**************************");
+
+            report.write("\n\nFaculty Members:\n----------------\n");
             for (int i = 0; i < FacultyList.size(); i++) {
-                report.write("\t"+ (i+1) + "." + FacultyList.get(i).getName());
-                report.write("\tID: " + FacultyList.get(i).getId());
-                report.write("\t" + FacultyList.get(i).getRank() + ", " + FacultyList.get(i).getDepartment());
+                report.write("\t"+ (i+1) + ". " + FacultyList.get(i).getName() + "\n");
+                report.write("\tID: " + FacultyList.get(i).getId() + "\n");
+                report.write("\t" + FacultyList.get(i).getRank() + ", " + FacultyList.get(i).getDepartment() + "\n\n");
             }
 
-            report.write("Staff Members:\n---------------\n");
+            report.write("\nStaff Members:\n--------------\n");
             for (int i = 0; i < StaffList.size(); i++) {
-                report.write("\t"+ (i+1) + "." + StaffList.get(i).getName());
-                report.write("\tID: " + StaffList.get(i).getId());
-                report.write("\t" + StaffList.get(i).getDepartment() + ", " + StaffList.get(i).getStatus() + " Time");
+                report.write("\t"+ (i+1) + ". " + StaffList.get(i).getName() + "\n");
+                report.write("\tID: " + StaffList.get(i).getId() + "\n");
+                report.write("\t" + StaffList.get(i).getDepartment() + ", " + StaffList.get(i).getStatus() + " Time\n\n");
             }
 
-            report.write("Students:\n---------------\n");
+            report.write("\nStudents:\n---------\n");
             for (int i = 0; i < StudentList.size(); i++) {
-                report.write("\t"+ (i+1) + "." + StudentList.get(i).getName());
-                report.write("\tID: " + StudentList.get(i).getId());
-                report.write("\tGPA: " + StudentList.get(i).getGpa());
-                report.write("\tCredit hours: " + StudentList.get(i).getCurrentCreditHours());
+                report.write("\t"+ (i+1) + ". " + StudentList.get(i).getName() + "\n");
+                report.write("\tID: " + StudentList.get(i).getId() + "\n");
+                report.write("\tGPA: " + StudentList.get(i).getGpa() + "\n");
+                report.write("\tCredit hours: " + StudentList.get(i).getCurrentCreditHours() + "\n\n");
             }
 
+            report.close();
             System.out.println("Report created and saved to hard drive!");
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             System.out.println("Error generating report.");
+            ex.printStackTrace();
         }
     }
 }
