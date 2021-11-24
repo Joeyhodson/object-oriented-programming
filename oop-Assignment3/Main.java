@@ -9,7 +9,7 @@ import java.time.format.*;
 /*
 Inheritance Structure: 
 
-University (holds an array of people)
+University (hashmap of Person)
 Menu
 Person (abstract)
     -> Student
@@ -38,9 +38,9 @@ public class Main {
             option =  myMenu.getOption();
             switch(option) {
 
+                // enter faculty info
                 case 1:
 
-                    // enter faculty info
                     String rank;
 
                     System.out.println("\n\nEnter faculty info:");
@@ -249,7 +249,7 @@ class University {
         Person person = this.list.get(id);
 
         if (person == null || !(person.getClass().getName().equals(personnelType))) {
-            System.out.println("\tNo "+personnelType.toLowerCase()+" match!\n");
+            System.out.println("\tNo " + personnelType.toLowerCase() + " match!\n");
             return;
         }
 
@@ -359,12 +359,12 @@ abstract class Person {
         }
 
         if (id.length() == 6 &&
-        Character.isLetter(id.charAt(0)) &&
-        Character.isLetter(id.charAt(1)) &&
-        Character.isDigit(id.charAt(2)) &&
-        Character.isDigit(id.charAt(3)) &&
-        Character.isDigit(id.charAt(4)) &&
-        Character.isDigit(id.charAt(5)))
+            Character.isLetter(id.charAt(0)) &&
+            Character.isLetter(id.charAt(1)) &&
+            Character.isDigit(id.charAt(2)) &&
+            Character.isDigit(id.charAt(3)) &&
+            Character.isDigit(id.charAt(4)) &&
+            Character.isDigit(id.charAt(5)))
         {
             return;
         }
@@ -395,11 +395,13 @@ abstract class Employee extends Person {
 
     public static boolean isDepartmentValid(String department) {
 
-        if (department.equals("mathematics") || 
-            department.equals("engineering") || 
-            department.equals("sciences")) {
+        if (department.equals("mathematics") ||
+            department.equals("engineering") ||
+            department.equals("sciences"))
+        {
             return true;
         }
+
         System.out.println("\t\t\""+department+"\" is invalid\n");
         return false;
     }
@@ -456,12 +458,12 @@ class Student extends Person {
     @Override
     public void print() {
         System.out.println("-----------------------------------------------------------------------");
-        System.out.println(this.getName()+"\t\t"+this.getId());
-        System.out.println("Credit Hours: "+this.getCurrentCreditHours()+" ($"+creditHourPrice+"/credit hour)");
+        System.out.println(this.getName() + "\t\t" + this.getId());
+        System.out.println("Credit Hours: " + this.getCurrentCreditHours() + " ($"+creditHourPrice + "/credit hour)");
         System.out.print("Fees: $");
         System.out.printf("%.0f", standardFee);
         System.out.print("\n\nTotal payment (after discount): $");
-        System.out.printf("%.2f", (this.getTotalFees()-this.getBonus()));
+        System.out.printf("%.2f", (this.getTotalFees() - this.getBonus()));
         System.out.print("\t($");
         System.out.printf("%.0f", this.getBonus());
         System.out.print(" discount applied)\n");
@@ -491,18 +493,20 @@ class Faculty extends Employee {
 
         if (rank.equals("professor") ||
             rank.equals("dean") ||
-            rank.equals("researcher")) {
+            rank.equals("researcher"))
+        {
             return true;
         }
-        System.out.println("\t\t\""+rank+"\" is invalid\n");
+
+        System.out.println("\t\t\"" + rank + "\" is invalid\n");
         return false;
     }
 
     @Override
     public void print() {
         System.out.println("-----------------------------------------------------------------------");
-        System.out.println(this.getName()+"\t\t"+this.getId());
-        System.out.println(this.getDepartment()+" Department, "+this.getRank());
+        System.out.println(this.getName() + "\t\t" + this.getId());
+        System.out.println(this.getDepartment() + " Department, " + this.getRank());
         System.out.println("-----------------------------------------------------------------------");
     }
 }
@@ -528,8 +532,8 @@ class Staff extends Employee {
     @Override
     public void print() {
         System.out.println("-----------------------------------------------------------------------");
-        System.out.println(this.getName()+"\t\t"+this.getId());
-        System.out.println(this.getDepartment()+" Department, "+this.getStatus()+" Time");
+        System.out.println(this.getName() + "\t\t" + this.getId());
+        System.out.println(this.getDepartment() + " Department, " + this.getStatus() + " Time");
         System.out.println("-----------------------------------------------------------------------");
     }
 }
